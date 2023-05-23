@@ -20,7 +20,80 @@ function Gameboard() {
         if (board[index].getValue() !== ' ') return `${index} is filled.`;
 
         board[index].fill(symbol);
-    }
+    };
+
+    const checkWin = (symbol) => {
+        if (checkStraightLine(symbol)) return true;
+        if (checkDiagonalLine(symbol)) return true;
+        return false;
+    };
+
+    const checkStraightLine = (symbol) => {
+        const values = board.map(cell => cell.getValue());
+        
+        // check for horizontal lines
+        if (
+            values[0] === symbol && 
+            values[1] === symbol &&
+            values[2] === symbol
+        ) return true;
+
+        if (
+            values[3] === symbol && 
+            values[4] === symbol &&
+            values[5] === symbol
+        ) return true;
+        
+        if (
+            values[6] === symbol && 
+            values[7] === symbol &&
+            values[8] === symbol
+        ) return true;
+
+        // check for vertical lines
+        if (
+            values[0] === symbol && 
+            values[3] === symbol &&
+            values[6] === symbol
+        ) return true;
+
+        if (
+            values[1] === symbol && 
+            values[4] === symbol &&
+            values[7] === symbol
+        ) return true;
+
+        if (
+            values[2] === symbol && 
+            values[5] === symbol &&
+            values[8] === symbol
+        ) return true;
+        
+        return false
+    };
+
+    const checkDiagonalLine = (symbol) => {
+        const values = board.map(cell => cell.getValue());
+        
+        if (
+            values[0] === symbol && 
+            values[4] === symbol &&
+            values[8] === symbol
+        ) return true;
+
+        if (
+            values[2] === symbol && 
+            values[4] === symbol &&
+            values[6] === symbol
+        ) return true;
+
+        return false
+    };
+
+    const isFull = () => {
+        const values = board.map(cell => cell.getValue());
+        return !values.includes(' ');
+    };
 
     const reset = () => {
         board.forEach(cell => cell.reset());
@@ -32,7 +105,7 @@ function Gameboard() {
         console.log(`${board[6].getValue()} | ${board[7].getValue()} | ${board[8].getValue()}`);
     };
 
-    return {getBoard, fill, print, reset};
+    return {getBoard, fill, print, reset, checkWin, isFull};
 }
 
 function GameController(
@@ -64,8 +137,31 @@ function GameController(
     };
 
     const playRound = (index) => {
+        const symbol = activePlayer.symbol;
+        const result = board.fill(index, getActivePlayer().symbol);
+
+        // check for duplicate attempt
+        if (result) {
+            console.log(result);
+            console.log(`${activePlayer.name}'s turn.`);
+            return;
+        }
+
+        // check for win
+        if (board.checkWin(symbol)) {
+            board.print();
+            console.log(`${activePlayer.name} won!`);
+            return;
+        }
+
+        // check for draw
+        if (board.isFull()) {
+            board.print();
+            console.log('It\'s a draw!');
+            return;
+        }
+
         console.log(`${getActivePlayer().name} filled the ${index}-th index.`);
-        board.fill(index, getActivePlayer().symbol);
 
         switchPlayerTurn();
         printNewRound();
@@ -73,8 +169,7 @@ function GameController(
 
     printNewRound();
 
-    return { playRound, getActivePlayer };
-
+    return { playRound, getActivePlayer, board };
 }
 
 const game = GameController();
