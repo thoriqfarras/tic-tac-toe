@@ -169,7 +169,66 @@ function GameController(
 
     printNewRound();
 
-    return { playRound, getActivePlayer, board };
+    return { playRound, getActivePlayer, getBoard: board.getBoard };
 }
 
-const game = GameController();
+function ScreenController() {
+    const circleIcon = 'assets/circle-outline.svg';
+    const crossIcon = 'assets/window-close.svg';
+
+    const game = GameController();
+    const prompt = document.querySelector('.prompt');
+    const boardDiv = document.querySelector('.grid');
+
+    const updateScreen = () => {
+
+        while (boardDiv.firstChild) {
+            boardDiv.removeChild(boardDiv.firstChild);
+        }
+
+        const board = game.getBoard();
+        const activePlayer = game.getActivePlayer();
+
+        prompt.textContent = `${activePlayer.name}'s turn...`;
+
+        board.forEach((cell, index) => {
+            const cellButton = document.createElement('button');
+            cellButton.setAttribute('type', 'button');
+            cellButton.classList.add('cell');
+            cellButton.dataset.index = index;
+
+            const value = cell.getValue();
+            if (value !== ' ') {
+                drawSymbol(value, cellButton);
+            }
+            boardDiv.appendChild(cellButton);
+        });
+    };
+
+    const clickHandlerBoard = e => {
+        const selectedCell = e.target.dataset.index;
+        game.playRound(selectedCell);
+        updateScreen();
+    };
+
+    const drawSymbol = (value, cell) => {
+        const symbol = document.createElement('img');
+        if (value === 'X') {
+            symbol.setAttribute('src', crossIcon);
+        } else if (value === 'O') {
+            symbol.setAttribute('src', circleIcon);
+        }
+        cell.appendChild(symbol);
+    };
+
+    boardDiv.addEventListener('click', clickHandlerBoard);
+    updateScreen();
+
+    // cells.forEach(cell => {
+    //     cell.addEventListener('click', () => {
+    //         drawSymbol()
+    //     });
+    // });
+}
+
+ScreenController();
