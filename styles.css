@@ -23,8 +23,10 @@ body {
 
 button {
     appearance: none;
+    cursor: pointer;
     background-color: transparent;
     border: 0;
+    font-family: 'Inter', sans-serif;
 }
 
 header {
@@ -33,7 +35,13 @@ header {
     place-items: center;
 
     font-weight: bold;
-    font-size: 2rem;
+    font-size: 3rem;
+}
+
+.prompt {
+    margin-bottom: 1rem;
+
+    font-size: 1.2rem;
 }
 
 .grid {
@@ -65,10 +73,27 @@ header {
     border-bottom: 0;
 }
 
+.reset > svg {
+    height: 50px;
+    width: auto;
+    fill:#030712;
+    margin-top: 1rem;
+}
+
+.reset:hover > svg {
+    animation: spin 0.5s ease-in-out;
+}
+
 footer {
     flex: 1;
     display: grid;
     place-items: end;
 
     padding: 0 0 10px 0;
+}
+
+@keyframes spin {
+    100% {
+        rotate: -360deg;
+    }
 }
