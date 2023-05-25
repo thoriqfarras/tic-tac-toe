@@ -151,14 +151,14 @@ function GameController(
         if (board.checkWin(symbol)) {
             board.print();
             console.log(`${activePlayer.name} won!`);
-            return;
+            return 'win';
         }
 
         // check for draw
         if (board.isFull()) {
             board.print();
             console.log('It\'s a draw!');
-            return;
+            return 'draw';
         }
 
         console.log(`${getActivePlayer().name} filled the ${index}-th index.`);
@@ -180,7 +180,7 @@ function ScreenController() {
     const prompt = document.querySelector('.prompt');
     const boardDiv = document.querySelector('.grid');
 
-    const updateScreen = () => {
+    const updateScreen = (result) => {
 
         while (boardDiv.firstChild) {
             boardDiv.removeChild(boardDiv.firstChild);
@@ -188,27 +188,33 @@ function ScreenController() {
 
         const board = game.getBoard();
         const activePlayer = game.getActivePlayer();
-
-        prompt.textContent = `${activePlayer.name}'s turn...`;
-
+        
         board.forEach((cell, index) => {
             const cellButton = document.createElement('button');
             cellButton.setAttribute('type', 'button');
             cellButton.classList.add('cell');
             cellButton.dataset.index = index;
-
+            
             const value = cell.getValue();
             if (value !== ' ') {
                 drawSymbol(value, cellButton);
             }
             boardDiv.appendChild(cellButton);
         });
+        
+        if (result === 'win') {
+            prompt.textContent = `${activePlayer.name} won!`;
+        } else if (result === 'draw') {
+            prompt.textContent = "It's a draw!";
+        } else {
+            prompt.textContent = `${activePlayer.name}'s turn...`;
+        }
     };
-
+    
     const clickHandlerBoard = e => {
         const selectedCell = e.target.dataset.index;
-        game.playRound(selectedCell);
-        updateScreen();
+        const result = game.playRound(selectedCell);
+        updateScreen(result);
     };
 
     const drawSymbol = (value, cell) => {
