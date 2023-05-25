@@ -79,6 +79,7 @@ header {
     width: auto;
     fill:#030712;
     margin-top: 1rem;
+    pointer-events: none;
 }
 
 .reset:hover > svg {

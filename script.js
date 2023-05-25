@@ -113,6 +113,7 @@ function GameController(
     playerTwoName = 'Player Two'
 ) {
     const board = Gameboard();
+    let running = true;
 
     const players = [{
         name: playerOneName,
@@ -128,6 +129,8 @@ function GameController(
     const switchPlayerTurn = () => {
         activePlayer = activePlayer === players[0] ? players[1] : players[0];
     };
+
+    const isRunning = () => running;
 
     const getActivePlayer = () => activePlayer;
 
@@ -151,6 +154,7 @@ function GameController(
         if (board.checkWin(symbol)) {
             board.print();
             console.log(`${activePlayer.name} won!`);
+            running = false;
             return 'win';
         }
 
@@ -158,6 +162,7 @@ function GameController(
         if (board.isFull()) {
             board.print();
             console.log('It\'s a draw!');
+            running = false;
             return 'draw';
         }
 
@@ -169,7 +174,12 @@ function GameController(
 
     printNewRound();
 
-    return { playRound, getActivePlayer, getBoard: board.getBoard };
+    return { 
+        playRound, 
+        getActivePlayer, 
+        getBoard: board.getBoard, 
+        isRunning
+    };
 }
 
 function ScreenController() {
@@ -179,9 +189,11 @@ function ScreenController() {
     const game = GameController();
     const prompt = document.querySelector('.prompt');
     const boardDiv = document.querySelector('.grid');
+    const resetButton = document.querySelector('.reset');
 
     const updateScreen = (result) => {
 
+        // remove all cells
         while (boardDiv.firstChild) {
             boardDiv.removeChild(boardDiv.firstChild);
         }
@@ -189,6 +201,11 @@ function ScreenController() {
         const board = game.getBoard();
         const activePlayer = game.getActivePlayer();
         
+        // if (result === 'reset') {
+        //     board.resetBoard();
+        // }
+
+        // render all cells
         board.forEach((cell, index) => {
             const cellButton = document.createElement('button');
             cellButton.setAttribute('type', 'button');
@@ -212,8 +229,15 @@ function ScreenController() {
     };
     
     const clickHandlerBoard = e => {
-        const selectedCell = e.target.dataset.index;
-        const result = game.playRound(selectedCell);
+        if (game.isRunning()) {
+            const selectedCell = e.target.dataset.index;
+            const result = game.playRound(selectedCell);
+            updateScreen(result);
+        }
+    };
+
+    const clickHandlerReset = e => {
+        const result = e.target.className;
         updateScreen(result);
     };
 
@@ -228,6 +252,7 @@ function ScreenController() {
     };
 
     boardDiv.addEventListener('click', clickHandlerBoard);
+    resetButton.addEventListener('click', clickHandlerReset);
     updateScreen();
 
     // cells.forEach(cell => {
