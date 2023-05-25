@@ -60,13 +60,10 @@ header {
 
 .cell {
     --border-color: #030712;
+    max-height: calc(var(--dimension) / 3);
 
     border-right: 2px solid var(--border-color);
     border-bottom: 2px solid var(--border-color);
-}
-
-.cell > img {
-    height: fit-content(10px);
 }
 
 .cell:nth-of-type(3n) {
