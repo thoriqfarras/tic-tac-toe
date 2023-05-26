@@ -134,6 +134,13 @@ function GameController(
 
     const getActivePlayer = () => activePlayer;
 
+    const resetGame = () => {
+        board.reset();
+        running = true;
+        activePlayer = players[0];
+    };
+
+
     const printNewRound = () => {
         board.print();
         console.log(`${getActivePlayer().name}'s turn.`);
@@ -178,7 +185,8 @@ function GameController(
         playRound, 
         getActivePlayer, 
         getBoard: board.getBoard, 
-        isRunning
+        isRunning,
+        resetGame
     };
 }
 
@@ -193,6 +201,10 @@ function ScreenController() {
 
     const updateScreen = (result) => {
 
+        if (result === 'reset') {
+            game.resetGame();
+        }
+        
         // remove all cells
         while (boardDiv.firstChild) {
             boardDiv.removeChild(boardDiv.firstChild);
@@ -200,10 +212,6 @@ function ScreenController() {
 
         const board = game.getBoard();
         const activePlayer = game.getActivePlayer();
-        
-        // if (result === 'reset') {
-        //     board.resetBoard();
-        // }
 
         // render all cells
         board.forEach((cell, index) => {
