@@ -30,9 +30,12 @@ button {
 }
 
 header {
-    flex: 1;
+    /* flex: 1; */
     display: grid;
     place-items: center;
+
+    padding: 2rem 2rem 0 2rem;
+    margin: 0 0 auto 0;
 
     font-weight: bold;
     font-size: 3rem;
@@ -45,7 +48,7 @@ header {
 }
 
 .grid {
-    --dimension: calc(100vmax / 3);
+    --dimension: calc(90vmax / 3);
 
     width: var(--dimension);
     height: var(--dimension);
@@ -87,15 +90,32 @@ header {
 }
 
 footer {
-    flex: 1;
-    display: grid;
-    place-items: end;
+    display: flex;
+    align-items: center;
+    gap: 2px;
 
+    margin: auto 0 0 0;
     padding: 0 0 10px 0;
 }
+
+footer svg {
+    height: 1.6rem;
+    aspect-ratio: 1 / 1;
+    transition: scale 0.1s ease-in-out;
+}
+
+footer > a:hover > svg {
+    scale: 1.2;
+}
+
+/* =================== */
 
 @keyframes spin {
     100% {
         rotate: -360deg;
     }
+}
+
+.highlight > img {
+    filter: invert(16%) sepia(83%) saturate(3132%) hue-rotate(350deg) brightness(92%) contrast(94%);
 }

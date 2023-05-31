@@ -10,6 +10,7 @@ function Cell() {
 
 function Gameboard() {
     let board = [];
+    let line = [];
     for (let i = 0; i < 9; i++) {
         board.push(Cell());
     }
@@ -28,6 +29,8 @@ function Gameboard() {
         return false;
     };
 
+    const getLine = () => line;
+
     const checkStraightLine = (symbol) => {
         const values = board.map(cell => cell.getValue());
         
@@ -36,40 +39,58 @@ function Gameboard() {
             values[0] === symbol && 
             values[1] === symbol &&
             values[2] === symbol
-        ) return true;
+        ) {
+            line = [0, 1, 2]
+            return true;
+        }
 
         if (
             values[3] === symbol && 
             values[4] === symbol &&
             values[5] === symbol
-        ) return true;
+        ) {
+            line = [3, 4, 5];
+            return true;
+        }
         
         if (
             values[6] === symbol && 
             values[7] === symbol &&
             values[8] === symbol
-        ) return true;
+        ) {
+            line = [6, 7, 8];
+            return true;
+        }
 
         // check for vertical lines
         if (
             values[0] === symbol && 
             values[3] === symbol &&
             values[6] === symbol
-        ) return true;
+        ) {
+            line = [0, 3, 6]
+            return true;
+        }
 
         if (
             values[1] === symbol && 
             values[4] === symbol &&
             values[7] === symbol
-        ) return true;
+        ) {
+            line = [1, 4, 7];
+            return true;
+        }
 
         if (
             values[2] === symbol && 
             values[5] === symbol &&
             values[8] === symbol
-        ) return true;
+        ) {
+            line = [2, 5, 8];
+            return true;
+        }
         
-        return false
+        return false;
     };
 
     const checkDiagonalLine = (symbol) => {
@@ -79,15 +100,21 @@ function Gameboard() {
             values[0] === symbol && 
             values[4] === symbol &&
             values[8] === symbol
-        ) return true;
+        ) {
+            line = [0, 4, 8];
+            return true;
+        }
 
         if (
             values[2] === symbol && 
             values[4] === symbol &&
             values[6] === symbol
-        ) return true;
+        ) {
+            line = [2, 4, 6];
+            return true;
+        }
 
-        return false
+        return false;
     };
 
     const isFull = () => {
@@ -97,6 +124,7 @@ function Gameboard() {
 
     const reset = () => {
         board.forEach(cell => cell.reset());
+        line = [];
     };
 
     const print = () => {
@@ -105,7 +133,7 @@ function Gameboard() {
         console.log(`${board[6].getValue()} | ${board[7].getValue()} | ${board[8].getValue()}`);
     };
 
-    return {getBoard, fill, print, reset, checkWin, isFull};
+    return {getBoard, fill, print, reset, checkWin, isFull, getLine};
 }
 
 function GameController(
@@ -186,7 +214,8 @@ function GameController(
         getActivePlayer, 
         getBoard: board.getBoard, 
         isRunning,
-        resetGame
+        resetGame,
+        getLine: board.getLine
     };
 }
 
@@ -229,6 +258,8 @@ function ScreenController() {
         
         if (result === 'win') {
             prompt.textContent = `${activePlayer.name} won!`;
+            const line = game.getLine();
+            highlightLine(line);
         } else if (result === 'draw') {
             prompt.textContent = "It's a draw!";
         } else {
@@ -259,15 +290,19 @@ function ScreenController() {
         cell.appendChild(symbol);
     };
 
+    const highlightLine = (line) => {
+        const cells = document.querySelectorAll('.cell');
+        console.log(line);
+        cells.forEach((cell, index) => {
+            if (line.includes(index)) {
+                cell.classList.toggle('highlight');
+            }
+        });    
+    };
+
     boardDiv.addEventListener('click', clickHandlerBoard);
     resetButton.addEventListener('click', clickHandlerReset);
     updateScreen();
-
-    // cells.forEach(cell => {
-    //     cell.addEventListener('click', () => {
-    //         drawSymbol()
-    //     });
-    // });
 }
 
 ScreenController();
